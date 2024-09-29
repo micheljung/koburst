@@ -1,0 +1,14 @@
+# Gradle
+.gradle/
+build/
+
+# IntelliJ
+.idea/*
+!.idea/dataSources.xml
+!.idea/vcs.xml
+*.ipr
+*.iml
+*.iws
+
+# Local environment
+.env
