@@ -4,5 +4,6 @@ plugins {
 }
 
 dependencies {
-  implementation(libs.ktor.server.metrics.micrometer)
+  api(project(":koburst-api"))
+  api(libs.kotlinx.coroutines.core)
 }

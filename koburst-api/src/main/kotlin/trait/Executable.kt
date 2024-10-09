@@ -1,7 +1,7 @@
 package io.koburst.api.trait
 
-import io.koburst.api.Session
+import io.koburst.api.Scenario
 
-interface Executable : Named {
-  fun execute(session: Session)
+interface Executable {
+  suspend fun execute(scenario: Scenario)
 }

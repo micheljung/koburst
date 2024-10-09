@@ -1,3 +1,3 @@
 package io.koburst.api
 
-interface Interpolation : (Double) -> Double
+fun interface Interpolation : (Double) -> Double

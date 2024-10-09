@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package koburst;
+
+message Message {
+  oneof payload {
+    Metric metric = 1;
+    Metrics metrics = 2;
+  }
+}
+
+message Metrics {
+  repeated Metric metrics = 1;
+}
+
+message Metric {
+  string name = 1;
+  double value = 2;
+  map<string, string> labels = 3;
+  int64 timestamp = 4;
+  Statistic statistic = 5;
+}
+
+enum Statistic {
+  TOTAL = 0;
+  TOTAL_TIME = 1;
+  COUNT = 2;
+  MAX = 3;
+  VALUE = 4;
+  UNKNOWN = 5;
+  ACTIVE_TASKS = 6;
+  DURATION = 7;
+}

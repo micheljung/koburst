@@ -22,5 +22,9 @@ rootProject.name = "koburst"
 include(
   "koburst-api",
   "koburst-core",
+  "koburst-promgraf",
+  "koburst-ui",
   "examples:koburst-example-grpc",
+  "examples:koburst-example-http",
+  "examples:koburst-example-promgraf",
 )
