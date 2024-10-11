@@ -6,7 +6,7 @@ kotlinxSerialization = "1.7.3"
 ktor = "2.3.12"
 logback = "1.5.8"
 testcontainers = "1.20.0"
-micrometerPrometheus = "1.13.5"
+micrometerPrometheus = "1.12.5"
 
 [libraries]
 archunit = { module = "com.tngtech.archunit:archunit", version.ref = "archunit" }
