@@ -31,6 +31,10 @@ class ScenarioImpl(override val name: String) : Scenario {
     users[user.id] = user
   }
 
+  private fun removeUser(user: User) {
+    users.remove(user.id)
+  }
+
   fun run() {
     check(userRampers.isNotEmpty()) { "No users ramped up" }
 
@@ -50,7 +54,13 @@ class ScenarioImpl(override val name: String) : Scenario {
           it.execute().collect { user ->
             addUser(user)
             launch {
-              user.execute(this@ScenarioImpl)
+              try {
+                user.execute(this@ScenarioImpl)
+              } catch (e: Exception) {
+                log.warn("User ${user.id} failed", e)
+              } finally {
+                removeUser(user)
+              }
             }
           }
         }
