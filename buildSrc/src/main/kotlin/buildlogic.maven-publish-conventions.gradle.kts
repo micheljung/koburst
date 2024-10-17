@@ -41,6 +41,7 @@ publishing {
       pom {
         name.set("KoBurst")
         description.set("Load testing library for Kotlin developers")
+        url.set("https://github.com/micheljung/koburst")
         licenses {
           license {
             name = "The Apache License, Version 2.0"
