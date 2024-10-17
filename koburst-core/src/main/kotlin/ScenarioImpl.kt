@@ -23,6 +23,8 @@ class ScenarioImpl(override val name: String) : Scenario {
 
   override lateinit var meterRegistry: MeterRegistry
 
+  override var keepRunning: Boolean = false
+
   override val users: MutableMap<Int, User> = mutableMapOf()
 
   lateinit var execution: Job
@@ -44,26 +46,34 @@ class ScenarioImpl(override val name: String) : Scenario {
         ?: LocalMeterRegistry(LocalMetricRegistryConfig, Clock.SYSTEM)
     }
 
-    Server.start(meterRegistry)
-
     meterRegistry.gaugeMapSize("koburst.users.count", Tags.empty(), users)
 
-    runBlocking {
-      execution = launch {
-        userRampers.forEach {
-          it.execute().collect { user ->
-            addUser(user)
-            launch {
-              try {
-                user.execute(this@ScenarioImpl)
-              } catch (e: Exception) {
-                log.warn("User ${user.id} failed", e)
-              } finally {
-                removeUser(user)
-              }
-            }
-          }
-        }
+    Server.start(meterRegistry, keepRunning)
+
+    meterRegistry.timer("koburst.scenario.time").record(
+      Runnable {
+        runBlocking { execution = execute() }
+      },
+    )
+  }
+
+  private fun CoroutineScope.execute() = launch {
+    userRampers.forEach {
+      it.execute().collect { user ->
+        addUser(user)
+        run(user)
+      }
+    }
+  }
+
+  private fun CoroutineScope.run(user: User) {
+    launch {
+      try {
+        user.execute(this@ScenarioImpl)
+      } catch (e: Exception) {
+        log.warn("User ${user.id} failed", e)
+      } finally {
+        removeUser(user)
       }
     }
   }

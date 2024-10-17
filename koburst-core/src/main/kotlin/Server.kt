@@ -27,7 +27,7 @@ import java.net.ServerSocket
 object Server {
 
   @OptIn(ExperimentalSerializationApi::class)
-  fun start(meterRegistry: MeterRegistry) {
+  fun start(meterRegistry: MeterRegistry, keepRunning: Boolean) {
     val port = getFreePort()
     embeddedServer(Netty, port = port) {
       attributes.put(AttributeKey("port"), port)
@@ -64,7 +64,7 @@ object Server {
           }
         }
       }
-    }.start(wait = false)
+    }.start(wait = keepRunning)
   }
 
   private val isPromGrafAvailable = classExists(PromGrafModule::class.java.name)

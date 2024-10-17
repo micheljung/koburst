@@ -22,12 +22,13 @@ abstract class BaseUser : User {
   override var id by Delegates.notNull<Int>()
   override lateinit var scenario: Scenario
   private val timers = mutableMapOf<String, Timer>()
+  private lateinit var currentContext: String
 
   /** Pause for exactly the specified duration. */
-  suspend fun pause(duration: Duration) = delay(duration)
+  protected suspend fun pause(duration: Duration) = delay(duration)
 
   /** Pause for anywhere between `min` and `max`. */
-  suspend fun pause(min: Duration, max: Duration) =
+  protected suspend fun pause(min: Duration, max: Duration) =
     delay((min.inWholeMilliseconds..max.inWholeMilliseconds).random())
 
   /**
@@ -37,11 +38,29 @@ abstract class BaseUser : User {
    *
    * If you need to stop immediately after the duration is up, use [repeat].
    */
-  suspend fun repeatFor(duration: Duration, block: suspend () -> Unit) {
+  protected suspend fun repeatFor(duration: Duration, block: suspend () -> Unit) {
     val start = System.currentTimeMillis()
     while (System.currentTimeMillis() - start < duration.inWholeMilliseconds) {
       block()
     }
+  }
+
+  /**
+   * Executes the block of code and retries on exception `times` times before propagating the
+   * exception.
+   */
+  protected suspend fun <T> retry(times: Int, block: suspend () -> T): T {
+    check(times > 0) { "times must be greater than 0" }
+
+    var exception: Exception? = null
+    repeat(times) {
+      try {
+        return block()
+      } catch (e: Exception) {
+        exception = e
+      }
+    }
+    throw exception!!
   }
 
   /**
@@ -53,7 +72,7 @@ abstract class BaseUser : User {
    *
    * If you need to allow the last block execution to finish, use [repeatFor].
    */
-  suspend fun repeatForStrict(duration: Duration, block: suspend () -> Unit) {
+  protected suspend fun repeatForStrict(duration: Duration, block: suspend () -> Unit) {
     try {
       withTimeout(duration.toJavaDuration()) {
         while (true) {
@@ -67,36 +86,99 @@ abstract class BaseUser : User {
 
   final override suspend fun execute(scenario: Scenario) {
     this.scenario = scenario
+    currentContext = "scenario"
     execute()
   }
 
-  // Workaround for https://github.com/micrometer-metrics/micrometer/issues/4455
+  /**
+   * Executes the block of code and records the time it took to execute. Exceptions are not
+   * propagated.
+   */
+  protected suspend fun <A> recordLenient(
+    name: String,
+    sla: Duration? = null,
+    block: suspend () -> Unit,
+  ) {
+    val parentContext = currentContext
+    try {
+      currentContext = name
+      timer("${name}.time", sla).recordSuspend(block).also {
+        executionCounter(name, true).increment()
+      }
+    } catch (e: Exception) {
+      // TODO log exception
+      executionCounter(name, false).increment()
+    } finally {
+      currentContext = parentContext
+    }
+  }
+
+  /**
+   * Executes the block of code and records the time it took to execute. In case of an exception,
+   * the function `fallbackValue` is called and its return value returned.
+   */
+  protected suspend fun <A> recordLenient(
+    name: String,
+    sla: Duration? = null,
+    fallbackValue: (Exception) -> A,
+    block: suspend () -> A,
+  ): A {
+    val parentContext = currentContext
+    return try {
+      currentContext = name
+      timer("${name}.time", sla).recordSuspend(block).also {
+        executionCounter(name, true).increment()
+      }
+    } catch (e: Exception) {
+      // TODO log exception
+      executionCounter(name, false).increment()
+      fallbackValue(e)
+    } finally {
+      currentContext = parentContext
+    }
+  }
+
+  /**
+   * Executes the block of code and records the time it took to execute. Exceptions are propagated.
+   */
   protected suspend fun <A> record(
     name: String,
     sla: Duration? = null,
     block: suspend () -> A,
-  ): A = try {
-    timer("${name}.time", sla).recordSuspend(block).also {
-      executionCounter(name, true).increment()
+  ): A {
+    val parentContext = currentContext
+    return try {
+      currentContext = name
+      timer("${name}.time", sla).recordSuspend(block).also {
+        executionCounter(name, true).increment()
+      }
+    } catch (e: Exception) {
+      executionCounter(name, false).increment()
+      throw e
+    } finally {
+      currentContext = parentContext
     }
-  } catch (e: Exception) {
-    executionCounter(name, false).increment()
-    throw e
   }
 
   private fun executionCounter(name: String, ok: Boolean) = scenario.meterRegistry
     .counter(
-      "${name}.execution",
-      Tags.of(Tag.of("status", if (ok) "ok" else "ko")),
+      "koburst.request",
+      Tags.of(
+        Tag.of("request", name),
+        Tag.of("status", if (ok) "ok" else "ko"),
+      ),
     )
 
   protected open fun timer(key: String, sla: Duration?) = timers.computeIfAbsent(key) {
-    Timer.builder(key).apply {
+    Timer.builder("koburst.request").apply {
+      tag("request", key)
       sla?.let { sla(it.toJavaDuration()) }
       publishPercentiles(.5, .75, .95, .99)
       publishPercentileHistogram(true)
     }.register(scenario.meterRegistry)
   }
+
+  protected suspend fun waitForUsers(count: Int) = scenario.waitForUsers(count)
 
   private suspend fun <A> Timer.recordSuspend(block: suspend () -> A): A =
     when (val timer = this) {

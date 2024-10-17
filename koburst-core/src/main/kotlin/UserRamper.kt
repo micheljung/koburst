@@ -30,7 +30,6 @@ class UserRamper(
       userFactory = SupplierBaseUserFactory(userSupplier)
     }
 
-    during = count.seconds
     var rampedUp = 0
     val interval = during.inWholeMilliseconds.toDouble() / count
     var time = 0

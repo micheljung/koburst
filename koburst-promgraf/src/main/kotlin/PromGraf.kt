@@ -106,6 +106,11 @@ private fun startGrafana(log: Logger, network: Network) {
       "/etc/grafana/provisioning/datasources",
       BindMode.READ_ONLY,
     )
+    .withClasspathResourceMapping(
+      "/grafana/dashboards",
+      "/etc/grafana/provisioning/dashboards",
+      BindMode.READ_ONLY,
+    )
     .apply {
       start()
     }
