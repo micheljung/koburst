@@ -2,19 +2,45 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.get
 
 plugins {
+  `java-library`
   `maven-publish`
+  signing
 }
 
 group = rootProject.group
 version = rootProject.version
 
+java {
+  withSourcesJar()
+  withJavadocJar()
+}
+
+val publicationName = "kotlin"
+
 publishing {
+  repositories {
+    maven {
+      name = "OSSRH"
+      setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+      credentials {
+        username = System.getenv("OSSRH_USERNAME")
+        password = System.getenv("OSSRH_TOKEN")
+      }
+    }
+  }
+
   publications {
-    create<MavenPublication>("mavenJava") {
-      from(components["java"])
+    create<MavenPublication>(publicationName) {
+      // Use this temporarily
+      groupId = "io.github.micheljung"
+
+      from(components["kotlin"])
+      artifact(tasks["sourcesJar"])
+      artifact(tasks["javadocJar"])
+
       pom {
-        name = "KoBurst"
-        description = "Load testing library for Kotlin developers"
+        name.set("KoBurst")
+        description.set("Load testing library for Kotlin developers")
         licenses {
           license {
             name = "The Apache License, Version 2.0"
@@ -36,4 +62,9 @@ publishing {
       }
     }
   }
+}
+
+signing {
+  useGpgCmd()
+  sign(publishing.publications[publicationName])
 }
