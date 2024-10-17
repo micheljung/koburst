@@ -92,6 +92,7 @@ private fun startGrafana(log: Logger, network: Network) {
         """.trimMargin(),
     )
   }
+  grafanaIni.toFile().setReadable(true, false)
 
   val container = GenericContainer("grafana/grafana:latest")
     .withNetwork(network)
