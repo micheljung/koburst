@@ -15,6 +15,10 @@ import org.testcontainers.Testcontainers
 import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.attribute.PosixFilePermission
 import java.util.*
 import kotlin.io.path.createTempFile
 import kotlin.io.path.writeText
@@ -61,6 +65,7 @@ private fun startPrometheus(log: Logger, port: Int, network: Network) {
         """.trimMargin(),
     )
   }
+  setReadable(prometheusYml)
 
   val container = GenericContainer("prom/prometheus:latest")
     .withNetwork(network)
@@ -92,7 +97,7 @@ private fun startGrafana(log: Logger, network: Network) {
         """.trimMargin(),
     )
   }
-  grafanaIni.toFile().setReadable(true, false)
+  setReadable(grafanaIni)
 
   val container = GenericContainer("grafana/grafana:latest")
     .withNetwork(network)
@@ -116,6 +121,11 @@ private fun startGrafana(log: Logger, network: Network) {
       start()
     }
   log.info("Grafana started on http://${container.host}:${container.getMappedPort(3000)}")
+}
+
+private fun setReadable(grafanaIni: Path) {
+  if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix"))
+    Files.setPosixFilePermissions(grafanaIni, setOf(PosixFilePermission.OTHERS_READ))
 }
 
 class PrometheusMeterRegistryProvider : MeterRegistryProvider {
