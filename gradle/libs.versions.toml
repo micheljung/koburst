@@ -1,5 +1,6 @@
 [versions]
 archunit = "1.3.0"
+gitVersioningPlugin = "6.4.4"
 kotest = "5.5.4"
 kotlin = "2.0.20-RC2"
 kotlinxSerialization = "1.7.3"
@@ -36,6 +37,7 @@ testcontainers-grafana = { module = "org.testcontainers:grafana", version.ref = 
 kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+gitVersioning = { id = "me.qoomon.git-versioning", version.ref="gitVersioningPlugin"}
 
 [bundles]
 kotest = ["kotest-assertions-core-jvm", "kotest-framework-engine-jvm"]
