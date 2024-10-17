@@ -15,32 +15,14 @@ With all the load testing tools out there, why would you want to use KoBurst?
 * It's not modular - no need for plugins that are often paid, unmaintained, don't work or don't
   exist.
 * No blocking code - all code is based on Kotlin coroutines.
+* No fixed set of metrics. By leveraging Micrometer, KoBurst allows you to collect any metrics you
+  want.
+* No proprietary visualization. By leveraging Grafana, you're free to visualize and build dashboards
+  the way need them to be.
 
-## Super Simple
+## Why not KoBurst?
 
-KoBurst consists of only 9 API classes that are super easy to understand.
-
-### User
-
-A `User` is a single user that will be making requests to your system. Simply implement the method
-`execute()` to define the behavior of the user. Just make sure that the code is non-blocking.
-
-### Scenario
-
-A `Scenario` defines how many of which `User`s will be ramped up over what time frame and for how
-long the test will run.
-
-## More Features
-
-### UserFactory
-
-Probably not needed, but if you want to create users dynamically, you can your own `UserFactory`.
-
-### Interpolation
-
-Probably not needed, but if you need to implement your own interpolation logic for ramping up users,
-this is your Interface to implement.
-
-KoBurst is a high performance load testing tool written in Kotlin. It is designed to be simple to
-use, yet powerful enough to handle the most complex of load testing scenarios. KoBurst is built on
-top of the popular [Ktor](https://ktor.io) framework and is designed to be highly extensible.
+* KoBurst is brand new.
+* It's not yet documented.
+* There's only a single contributor.
+* It's for Kotlin developers only.
