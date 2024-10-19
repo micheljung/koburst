@@ -1,8 +1,6 @@
 package io.koburst.example.http
 
-import io.koburst.api.Scenario
-import io.koburst.api.User
-import io.koburst.api.UserFactory
+import io.koburst.core.BaseUser
 import io.koburst.core.ScenarioDsl.rampUsers
 import io.koburst.core.ScenarioDsl.scenario
 import io.ktor.client.*
@@ -14,6 +12,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.util.function.Supplier
 import kotlin.time.Duration.Companion.seconds
 
 object HttpExample {
@@ -27,26 +26,19 @@ object HttpExample {
       }
     }.start(wait = false)
 
-    scenario("Simple example") {
+    scenario("HTTP example") {
       rampUsers(50) {
-        during = 10.seconds
-        userFactory = object : UserFactory {
-          override fun create(id: Int) = HttpExampleUser(id)
-        }
+        during = 30.seconds
+        userSupplier = Supplier { HttpExampleUser() }
       }
     }
   }
 }
 
-data class HttpExampleUser(
-  override val id: Int,
-) : User {
+class HttpExampleUser : BaseUser() {
   private val name = "User $id"
 
-  override val scenario: Scenario
-    get() = TODO("Not yet implemented")
-
-  override suspend fun execute(scenario: Scenario) {
+  override suspend fun execute() {
     val client = HttpClient(CIO)
     val response = client.get("http://localhost:8000/") {
       url {

@@ -1,4 +1,4 @@
-package io.koburst.example.grpc
+package io.koburst.example.http
 
 import io.koburst.core.BaseUser
 import io.koburst.core.ScenarioDsl.rampUsers
@@ -6,23 +6,24 @@ import io.koburst.core.ScenarioDsl.scenario
 import java.util.function.Supplier
 import kotlin.time.Duration.Companion.seconds
 
-object SimpleExample {
+object PromGrafExample {
   @JvmStatic
   fun main(args: Array<String>) {
-    scenario("Simple example") {
-      rampUsers(1) {
-        userSupplier = Supplier { PrintHelloBehavior() }
+    scenario("Prometheus & Grafana example") {
+      rampUsers(50) {
+        during = 10.seconds
+        userSupplier = Supplier { PrintHelloUser() }
       }
     }
   }
 }
 
-class PrintHelloBehavior : BaseUser() {
+class PrintHelloUser : BaseUser() {
 
   override suspend fun execute() {
     println("[${id}] Hello, Koburst!")
     while (true) {
-      record("procrastinate") {
+      record("sleep") {
         pause(1.seconds, 10.seconds)
       }
     }
