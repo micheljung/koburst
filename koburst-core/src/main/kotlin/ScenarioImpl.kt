@@ -5,6 +5,7 @@ import io.koburst.api.Scenario
 import io.koburst.api.User
 import io.koburst.core.metrics.LocalMeterRegistry
 import io.koburst.core.metrics.LocalMetricRegistryConfig
+import io.ktor.server.application.*
 import io.ktor.util.logging.*
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.MeterRegistry
@@ -20,6 +21,8 @@ internal val log = KtorSimpleLogger("KoBurst")
 class ScenarioImpl(override val name: String) : Scenario {
 
   val userRampers: MutableList<UserRamper> = mutableListOf()
+
+  override lateinit var logger: Logger
 
   override lateinit var meterRegistry: MeterRegistry
 
@@ -48,7 +51,7 @@ class ScenarioImpl(override val name: String) : Scenario {
 
     meterRegistry.gaugeMapSize("koburst.users.count", Tags.empty(), users)
 
-    Server.start(meterRegistry, keepRunning)
+    Server.start(meterRegistry, keepRunning) { logger = it.log }
 
     meterRegistry.timer("koburst.scenario.time").record(
       Runnable {

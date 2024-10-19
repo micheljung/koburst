@@ -9,6 +9,7 @@ import io.micrometer.core.instrument.Timer
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.time.withTimeout
+import org.slf4j.Logger
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 import kotlin.time.Duration
@@ -21,6 +22,7 @@ import kotlin.time.toJavaDuration
 abstract class BaseUser : User {
   override var id by Delegates.notNull<Int>()
   override lateinit var scenario: Scenario
+  protected lateinit var logger: Logger
   private val timers = mutableMapOf<String, Timer>()
   private lateinit var currentContext: String
 
@@ -86,6 +88,7 @@ abstract class BaseUser : User {
 
   final override suspend fun execute(scenario: Scenario) {
     this.scenario = scenario
+    this.logger = scenario.logger
     currentContext = "scenario"
     execute()
   }

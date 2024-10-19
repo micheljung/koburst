@@ -10,12 +10,13 @@ dependencies {
   compileOnly(project(":koburst-promgraf"))
 
   api(libs.kotlinx.coroutines.core)
+  api(libs.logback.classic)
+
   implementation(libs.ktor.serialization.kotlinx.protobuf)
   implementation(libs.ktor.server.content.negotiation)
   implementation(libs.ktor.server.metrics.micrometer)
   implementation(libs.ktor.server.netty)
   implementation(libs.ktor.server.websocket)
   implementation(libs.kotlinx.serialization.protobuf)
-  implementation(libs.logback.classic)
   compileOnly(libs.micrometer.registry.prometheus)
 }

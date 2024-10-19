@@ -27,7 +27,11 @@ import java.net.ServerSocket
 object Server {
 
   @OptIn(ExperimentalSerializationApi::class)
-  fun start(meterRegistry: MeterRegistry, keepRunning: Boolean) {
+  fun start(
+    meterRegistry: MeterRegistry,
+    keepRunning: Boolean,
+    applicationCallback: (Application) -> Unit,
+  ) {
     val port = getFreePort()
     embeddedServer(Netty, port = port) {
       attributes.put(AttributeKey("port"), port)
@@ -64,6 +68,8 @@ object Server {
           }
         }
       }
+
+      applicationCallback(this)
     }.start(wait = keepRunning)
   }
 

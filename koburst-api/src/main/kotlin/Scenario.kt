@@ -2,6 +2,7 @@ package io.koburst.api
 
 import io.koburst.api.trait.Named
 import io.micrometer.core.instrument.MeterRegistry
+import org.slf4j.Logger
 
 interface Scenario : Named {
   val meterRegistry: MeterRegistry
@@ -13,6 +14,8 @@ interface Scenario : Named {
    * the metrics after the scenario has finished.
    */
   val keepRunning: Boolean
+
+  val logger: Logger
 
   suspend fun stop()
 
