@@ -15,7 +15,7 @@ dependencies {
   implementation(libs.ktor.serialization.kotlinx.protobuf)
   implementation(libs.ktor.server.content.negotiation)
   implementation(libs.ktor.server.metrics.micrometer)
-  implementation(libs.ktor.server.netty)
+  implementation(libs.ktor.server.cio)
   implementation(libs.ktor.server.websocket)
   implementation(libs.kotlinx.serialization.protobuf)
   compileOnly(libs.micrometer.registry.prometheus)

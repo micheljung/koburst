@@ -7,10 +7,10 @@ import io.koburst.promgraf.PromGraf
 import io.koburst.promgraf.PromGrafModule
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
+import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.metrics.micrometer.*
-import io.ktor.server.netty.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.util.*
@@ -33,7 +33,7 @@ object Server {
     applicationCallback: (Application) -> Unit,
   ) {
     val port = getFreePort()
-    embeddedServer(Netty, port = port) {
+    embeddedServer(CIO, port = port) {
       attributes.put(AttributeKey("port"), port)
       install(MicrometerMetrics) {
         registry = meterRegistry
