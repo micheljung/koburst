@@ -52,6 +52,12 @@ val PromGraf = createApplicationPlugin(name = "PromGraf") {
   }
 }
 
+private val allRead = setOf(
+  PosixFilePermission.OWNER_READ,
+  PosixFilePermission.GROUP_READ,
+  PosixFilePermission.OTHERS_READ,
+)
+
 private fun startPrometheus(log: Logger, port: Int, network: Network) {
   val prometheusYml = createTempFile("prometheus", ".yml").apply {
     writeText(
@@ -65,7 +71,7 @@ private fun startPrometheus(log: Logger, port: Int, network: Network) {
         """.trimMargin(),
     )
   }
-  setReadable(prometheusYml)
+  setPermissions(prometheusYml, allRead)
 
   val container = GenericContainer("prom/prometheus:latest")
     .withNetwork(network)
@@ -97,7 +103,7 @@ private fun startGrafana(log: Logger, network: Network) {
         """.trimMargin(),
     )
   }
-  setReadable(grafanaIni)
+  setPermissions(grafanaIni, allRead)
 
   val container = GenericContainer("grafana/grafana:latest")
     .withNetwork(network)
@@ -123,9 +129,9 @@ private fun startGrafana(log: Logger, network: Network) {
   log.info("Grafana started on http://${container.host}:${container.getMappedPort(3000)}")
 }
 
-private fun setReadable(grafanaIni: Path) {
+private fun setPermissions(file: Path, permissions: Set<PosixFilePermission>) {
   if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix"))
-    Files.setPosixFilePermissions(grafanaIni, setOf(PosixFilePermission.OTHERS_READ))
+    Files.setPosixFilePermissions(file, permissions)
 }
 
 class PrometheusMeterRegistryProvider : MeterRegistryProvider {
