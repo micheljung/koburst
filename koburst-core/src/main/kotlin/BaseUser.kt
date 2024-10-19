@@ -49,9 +49,14 @@ abstract class BaseUser : User {
 
   /**
    * Executes the block of code and retries on exception `times` times before propagating the
-   * exception.
+   * exception. If an exception is thrown, it is passed to `onError`. This can be used, for example,
+   * to log the exception or pause. If `onError` throws an exception, it will be propagated.
    */
-  protected suspend fun <T> retry(times: Int, block: suspend () -> T): T {
+  protected suspend fun <T> retry(
+    times: Int,
+    onError: (Exception) -> Unit,
+    block: suspend () -> T,
+  ): T {
     check(times > 0) { "times must be greater than 0" }
 
     var exception: Exception? = null
@@ -59,11 +64,18 @@ abstract class BaseUser : User {
       try {
         return block()
       } catch (e: Exception) {
+        onError(e)
         exception = e
       }
     }
     throw exception!!
   }
+
+  /**
+   * Executes the block of code and retries on exception `times` times before propagating the
+   * exception.
+   */
+  protected suspend fun <T> retry(times: Int, block: suspend () -> T) = retry(times, {}, block)
 
   /**
    * Repeats the block of code for the specified duration. If the time is up, the block
