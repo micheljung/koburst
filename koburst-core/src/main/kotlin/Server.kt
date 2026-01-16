@@ -73,7 +73,7 @@ object Server {
     }.start(wait = keepRunning)
   }
 
-  private val isPromGrafAvailable = classExists(PromGrafModule::class.java.name)
+  private val isPromGrafAvailable = classExists("io.koburst.promgraf.PromGrafModule")
 
   private fun classExists(className: String) = kotlin.runCatching {
     Class.forName(className)

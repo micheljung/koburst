@@ -8,13 +8,12 @@ import java.util.function.Supplier
 import kotlin.properties.Delegates
 import kotlin.system.measureTimeMillis
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 @ScenarioMarker
 class UserRamper(
   private val count: Int,
 ) {
-  var during: Duration by Delegates.notNull()
+  var during: Duration = Duration.ZERO
   var function: Interpolation = Interpolations.linear
   lateinit var userSupplier: Supplier<BaseUser>
   lateinit var userFactory: UserFactory
