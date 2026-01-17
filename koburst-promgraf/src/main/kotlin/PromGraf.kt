@@ -4,7 +4,6 @@ import io.koburst.api.MeterRegistryProvider
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.*
 import io.ktor.util.logging.*
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
@@ -28,7 +27,8 @@ object PromGrafModule
 
 val PromGraf = createApplicationPlugin(name = "PromGraf") {
   val network = Network.newNetwork()
-  val port = application.attributes[AttributeKey("port")] as Int
+  val port =
+    application.attributes[application.attributes.allKeys.single { it.name == "port" }] as Int
   runBlocking {
     joinAll(
       async {
