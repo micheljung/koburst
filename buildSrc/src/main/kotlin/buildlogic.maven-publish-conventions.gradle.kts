@@ -18,17 +18,6 @@ java {
 val publicationName = "kotlin"
 
 publishing {
-  repositories {
-    maven {
-      name = "OSSRH"
-      setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-      credentials {
-        username = System.getenv("OSSRH_USERNAME")
-        password = System.getenv("OSSRH_TOKEN")
-      }
-    }
-  }
-
   publications {
     create<MavenPublication>(publicationName) {
       // Use this temporarily

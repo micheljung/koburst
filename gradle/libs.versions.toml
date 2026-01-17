@@ -9,6 +9,7 @@ ktor = "3.3.3"
 logback = "1.5.24"
 testcontainers = "2.0.3"
 micrometerPrometheus = "1.16.2"
+nexusPublishPlugin = "2.0.0"
 
 [libraries]
 archunit = { module = "com.tngtech.archunit:archunit", version.ref = "archunit" }
@@ -41,6 +42,7 @@ kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "ko
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 gitVersioning = { id = "me.qoomon.git-versioning", version.ref="gitVersioningPlugin"}
+nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref="nexusPublishPlugin"}
 
 [bundles]
 kotest = ["kotest-assertions-core-jvm", "kotest-framework-engine-jvm"]
