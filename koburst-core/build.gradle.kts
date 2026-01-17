@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
   api(project(":koburst-api"))
-  implementation(project(":koburst-ui"))
   compileOnly(project(":koburst-promgraf"))
 
   api(libs.kotlinx.coroutines.core)
