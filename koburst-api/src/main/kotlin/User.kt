@@ -1,6 +1,6 @@
-package io.github.micheljung.koburst.api
+package io.koburst.api
 
-import io.github.micheljung.koburst.api.trait.Executable
+import io.koburst.api.trait.Executable
 
 interface User : Executable {
   val id: Int

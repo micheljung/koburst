@@ -1,3 +1,3 @@
-package io.github.micheljung.koburst.api
+package io.koburst.api
 
 fun interface Interpolation : (Double) -> Double

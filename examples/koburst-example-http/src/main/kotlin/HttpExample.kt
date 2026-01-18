@@ -1,8 +1,8 @@
-package io.github.micheljung.koburst.example.http
+package io.koburst.example.http
 
-import io.github.micheljung.koburst.core.BaseUser
-import io.github.micheljung.koburst.core.ScenarioDsl.rampUsers
-import io.github.micheljung.koburst.core.ScenarioDsl.scenario
+import io.koburst.core.BaseUser
+import io.koburst.core.ScenarioDsl.rampUsers
+import io.koburst.core.ScenarioDsl.scenario
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*

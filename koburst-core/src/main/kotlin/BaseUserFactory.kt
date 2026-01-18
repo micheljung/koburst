@@ -1,6 +1,6 @@
-package io.github.micheljung.koburst.core
+package io.koburst.core
 
-import io.github.micheljung.koburst.api.UserFactory
+import io.koburst.api.UserFactory
 
 /**
  * A factory for creating [BaseUser] instances. Using this factory, and [BaseUser], simplifies user

@@ -1,4 +1,4 @@
-package io.github.micheljung.koburst.core
+package io.koburst.core
 
 class Feeder {
 

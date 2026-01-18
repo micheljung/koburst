@@ -1,6 +1,6 @@
-package io.github.micheljung.koburst.api.trait
+package io.koburst.api.trait
 
-import io.github.micheljung.koburst.api.Scenario
+import io.koburst.api.Scenario
 
 interface Executable {
   suspend fun execute(scenario: Scenario)

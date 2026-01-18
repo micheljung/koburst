@@ -1,2 +1,2 @@
-package io.github.micheljung.koburst.api
+package io.koburst.api
 

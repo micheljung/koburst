@@ -1,7 +1,7 @@
-package io.github.micheljung.koburst.core
+package io.koburst.core
 
-import io.github.micheljung.koburst.api.Scenario
-import io.github.micheljung.koburst.api.User
+import io.koburst.api.Scenario
+import io.koburst.api.User
 import io.micrometer.core.instrument.AbstractTimer
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags

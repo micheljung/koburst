@@ -1,6 +1,6 @@
-package io.github.micheljung.koburst.api
+package io.koburst.api
 
-import io.github.micheljung.koburst.api.trait.Named
+import io.koburst.api.trait.Named
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
 
