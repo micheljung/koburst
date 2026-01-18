@@ -1,10 +1,10 @@
-package io.koburst.core
+package io.github.micheljung.koburst.core
 
-import io.koburst.api.MeterRegistryProvider
-import io.koburst.api.Scenario
-import io.koburst.api.User
-import io.koburst.core.metrics.LocalMeterRegistry
-import io.koburst.core.metrics.LocalMetricRegistryConfig
+import io.github.micheljung.koburst.api.MeterRegistryProvider
+import io.github.micheljung.koburst.api.Scenario
+import io.github.micheljung.koburst.api.User
+import io.github.micheljung.koburst.core.metrics.LocalMeterRegistry
+import io.github.micheljung.koburst.core.metrics.LocalMetricRegistryConfig
 import io.ktor.server.application.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.util.logging.*

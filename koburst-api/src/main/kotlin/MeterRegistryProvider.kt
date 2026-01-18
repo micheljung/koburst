@@ -1,4 +1,4 @@
-package io.koburst.api
+package io.github.micheljung.koburst.api
 
 import io.micrometer.core.instrument.MeterRegistry
 

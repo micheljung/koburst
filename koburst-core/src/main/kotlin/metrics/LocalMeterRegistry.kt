@@ -1,4 +1,4 @@
-package io.koburst.core.metrics
+package io.github.micheljung.koburst.core.metrics
 
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.Statistic

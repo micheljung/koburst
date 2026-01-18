@@ -1,10 +1,10 @@
-package io.koburst.core
+package io.github.micheljung.koburst.core
 
-import io.koburst.core.metrics.LocalMeterRegistry
-import io.koburst.core.metrics.Metric
-import io.koburst.core.metrics.Metrics
-import io.koburst.promgraf.PromGraf
-import io.koburst.promgraf.PromGrafModule
+import io.github.micheljung.koburst.core.metrics.LocalMeterRegistry
+import io.github.micheljung.koburst.core.metrics.Metric
+import io.github.micheljung.koburst.core.metrics.Metrics
+import io.github.micheljung.koburst.promgraf.PromGraf
+import io.github.micheljung.koburst.promgraf.PromGrafModule
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
@@ -73,7 +73,7 @@ object Server {
     }.start(wait = keepRunning)
   }
 
-  private val isPromGrafAvailable = classExists("io.koburst.promgraf.PromGrafModule")
+  private val isPromGrafAvailable = classExists("io.github.micheljung.koburst.promgraf.PromGrafModule")
 
   private fun classExists(className: String) = kotlin.runCatching {
     Class.forName(className)

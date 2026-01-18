@@ -1,6 +1,6 @@
-package io.koburst.core
+package io.github.micheljung.koburst.core
 
-import io.koburst.api.Interpolation
+import io.github.micheljung.koburst.api.Interpolation
 import kotlin.math.*
 
 object Interpolations {

@@ -3,7 +3,7 @@ plugins {
   alias(libs.plugins.nexusPublish)
 }
 
-group = "io.koburst"
+group = "io.github.micheljung.koburst"
 version = "0.0.0-SNAPSHOT"
 gitVersioning.apply {
   refs {

@@ -1,8 +1,8 @@
-package io.koburst.example.http
+package io.github.micheljung.koburst.example.http
 
-import io.koburst.core.BaseUser
-import io.koburst.core.ScenarioDsl.rampUsers
-import io.koburst.core.ScenarioDsl.scenario
+import io.github.micheljung.koburst.core.BaseUser
+import io.github.micheljung.koburst.core.ScenarioDsl.rampUsers
+import io.github.micheljung.koburst.core.ScenarioDsl.scenario
 import java.util.function.Supplier
 import kotlin.time.Duration.Companion.seconds
 

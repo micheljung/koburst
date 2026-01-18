@@ -1,6 +1,6 @@
-package io.koburst.promgraf
+package io.github.micheljung.koburst.promgraf
 
-import io.koburst.api.MeterRegistryProvider
+import io.github.micheljung.koburst.api.MeterRegistryProvider
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
