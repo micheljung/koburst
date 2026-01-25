@@ -6,14 +6,12 @@ import io.koburst.api.User
 import io.koburst.core.metrics.LocalMeterRegistry
 import io.koburst.core.metrics.LocalMetricRegistryConfig
 import io.ktor.server.application.*
-import io.ktor.server.engine.embeddedServer
 import io.ktor.util.logging.*
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.collections.set
 
 
 internal val log = KtorSimpleLogger("KoBurst")

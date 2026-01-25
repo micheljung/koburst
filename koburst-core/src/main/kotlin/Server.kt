@@ -4,7 +4,6 @@ import io.koburst.core.metrics.LocalMeterRegistry
 import io.koburst.core.metrics.Metric
 import io.koburst.core.metrics.Metrics
 import io.koburst.promgraf.PromGraf
-import io.koburst.promgraf.PromGrafModule
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
