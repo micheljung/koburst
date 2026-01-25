@@ -90,7 +90,7 @@ private fun startPrometheus(log: Logger, port: Int, network: Network) {
   log.info("Prometheus started on http://${container.host}:$mappedPort")
 }
 
-private fun startGrafana(log: Logger, network: Network) {
+private fun startGrafana(log: Logger, network: Network, homePage: String = "/d/fe0osu4qewsu8c") {
   val grafanaIni = createTempFile("grafana", ".ini").apply {
     writeText(
       """
@@ -100,6 +100,8 @@ private fun startGrafana(log: Logger, network: Network) {
         |
         |[auth.basic]
         |enabled = false
+        |[users]
+        |home_page=$homePage
         """.trimMargin(),
     )
   }
