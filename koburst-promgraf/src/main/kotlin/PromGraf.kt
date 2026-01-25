@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.logging.*
+import io.ktor.utils.io.*
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import kotlinx.coroutines.async
@@ -14,6 +15,8 @@ import org.testcontainers.Testcontainers
 import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
+import java.awt.Desktop
+import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
@@ -25,30 +28,47 @@ import kotlin.io.path.writeText
 
 object PromGrafModule
 
-val PromGraf = createApplicationPlugin(name = "PromGraf") {
-  val network = Network.newNetwork()
-  val port =
-    application.attributes[application.attributes.allKeys.single { it.name == "port" }] as Int
-  runBlocking {
-    joinAll(
-      async {
-        startPrometheus(application.log, port, network)
-      },
-      async {
-        startGrafana(application.log, network)
-      },
-    )
+val PromGraf: ApplicationPlugin<PromGrafConfig> =
+  createApplicationPlugin(name = "PromGraf", ::PromGrafConfig) {
+    val network = Network.newNetwork()
+    val port =
+      application.attributes[application.attributes.allKeys.single { it.name == "port" }] as Int
+    runBlocking {
+      joinAll(
+        async {
+          startPrometheus(application.log, port, network)
+        },
+        async {
+          val grafanaUrl = startGrafana(application.log, network)
+          if (pluginConfig.openBrowser) {
+            openBrowser(grafanaUrl)
+          }
+        },
+      )
+    }
+
+    application.routing {
+      get("/metrics") {
+        val meterRegistry = ServiceLoader.load(MeterRegistryProvider::class.java).singleOrNull()
+          ?.getMeterRegistry()
+          ?: error("No MeterRegistryProvider found")
+
+        check(meterRegistry is PrometheusMeterRegistry) { "MeterRegistry is not a PrometheusMeterRegistry." }
+        call.respond(meterRegistry.scrape())
+      }
+    }
   }
 
-  application.routing {
-    get("/metrics") {
-      val meterRegistry = ServiceLoader.load(MeterRegistryProvider::class.java).singleOrNull()
-        ?.getMeterRegistry()
-        ?: error("No MeterRegistryProvider found")
-
-      check(meterRegistry is PrometheusMeterRegistry) { "MeterRegistry is not a PrometheusMeterRegistry." }
-      call.respond(meterRegistry.scrape())
-    }
+private fun openBrowser(url: String) {
+  try {
+    Class.forName("java.awt.Desktop")
+  } catch (_: ClassNotFoundException) {
+    return
+  }
+  val openBrowser =
+    Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
+  if (openBrowser) {
+    Desktop.getDesktop().browse(URI(url))
   }
 }
 
@@ -90,7 +110,11 @@ private fun startPrometheus(log: Logger, port: Int, network: Network) {
   log.info("Prometheus started on http://${container.host}:$mappedPort")
 }
 
-private fun startGrafana(log: Logger, network: Network, homePage: String = "/d/fe0osu4qewsu8c") {
+private fun startGrafana(
+  log: Logger,
+  network: Network,
+  homePage: String = "/d/fe0osu4qewsu8c",
+): String {
   val grafanaIni = createTempFile("grafana", ".ini").apply {
     writeText(
       """
@@ -128,7 +152,9 @@ private fun startGrafana(log: Logger, network: Network, homePage: String = "/d/f
     .apply {
       start()
     }
-  log.info("Grafana started on http://${container.host}:${container.getMappedPort(3000)}")
+  val grafanaUrl = "http://${container.host}:${container.getMappedPort(3000)}"
+  log.info("Grafana started on $grafanaUrl")
+  return grafanaUrl
 }
 
 private fun setPermissions(file: Path, permissions: Set<PosixFilePermission>) {
@@ -143,4 +169,14 @@ class PrometheusMeterRegistryProvider : MeterRegistryProvider {
   companion object {
     private val prometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
   }
+}
+
+@KtorDsl
+class PromGrafConfig {
+
+  /**
+   * Whether to open Grafana in the browser on start. This requires a Desktop environment to be
+   * present, as well as `java.awt` to be available in the executing Java Virtual Machine.
+   */
+  var openBrowser: Boolean = true
 }

@@ -40,7 +40,8 @@ object Server {
       }
 
       if (isPromGrafAvailable) {
-        install(PromGraf)
+        install(PromGraf) {
+        }
       }
 
       if (meterRegistry is LocalMeterRegistry) {
