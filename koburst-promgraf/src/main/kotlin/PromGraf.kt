@@ -60,11 +60,9 @@ val PromGraf: ApplicationPlugin<PromGrafConfig> =
   }
 
 private fun openBrowser(url: String) {
-  try {
-    Class.forName("java.awt.Desktop")
-  } catch (_: ClassNotFoundException) {
-    return
-  }
+  val hasAwt = runCatching { Class.forName("java.awt.Desktop") }.isSuccess
+  if (!hasAwt) return
+
   val openBrowser =
     Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
   if (openBrowser) {
