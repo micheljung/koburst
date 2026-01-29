@@ -17,6 +17,9 @@ interface Scenario : Named {
 
   val logger: Logger
 
+  /** Random if `null`. */
+  val port: Int?
+
   suspend fun stop()
 
   /** Delays the coroutine until the requested number of users are ready. */

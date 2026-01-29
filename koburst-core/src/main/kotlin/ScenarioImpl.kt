@@ -31,6 +31,8 @@ class ScenarioImpl(override val name: String) : Scenario {
 
   lateinit var execution: Job
 
+  override var port: Int? = null
+
   private fun addUser(user: User) {
     users[user.id] = user
   }
@@ -50,7 +52,7 @@ class ScenarioImpl(override val name: String) : Scenario {
 
     meterRegistry.gaugeMapSize("koburst.users.count", Tags.empty(), users)
 
-    Server.start(meterRegistry, keepRunning) { logger = it.log }
+    Server.start(meterRegistry, keepRunning, port) { logger = it.log }
 
     meterRegistry.timer("koburst.scenario.time").record(
       Runnable {

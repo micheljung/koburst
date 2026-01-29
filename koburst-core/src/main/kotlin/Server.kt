@@ -29,9 +29,10 @@ object Server {
   fun start(
     meterRegistry: MeterRegistry,
     keepRunning: Boolean,
+    port: Int?,
     applicationCallback: (Application) -> Unit,
   ) {
-    val port = getFreePort()
+    val port = port ?: getFreePort()
     embeddedServer(CIO, port = port) {
       attributes.put(AttributeKey("port"), port)
       install(MicrometerMetrics) {
